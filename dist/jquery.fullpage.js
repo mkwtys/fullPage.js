@@ -2123,8 +2123,27 @@
 
         var previousHeight = windowsHeight;
 
-        //when resizing the site, we adjust the heights of the sections, slimScroll...
+        /*
+        * Resize event handler.
+        */ 
         function resizeHandler(){
+
+            //issue #3336 
+            //(some apps or browsers, like Chrome for Mobile take time to report the real height)
+            //so we check it 3 times with intervals in that case
+            var isChromeMobile = navigator.userAgent.match('CriOS');
+            var numRepetitions = isChromeMobile ? 3 : 1;
+
+            for(var i = 0; i< numRepetitions; i++){
+                resizeId = setTimeout(resizeActions, isChromeMobile ? 200 * i : 0);
+            }
+        }
+
+        /**
+        * When resizing the site, we adjust the heights of the sections, slimScroll...
+        */
+        function resizeActions(){
+
             //checking if it needs to get responsive
             responsive();
 
@@ -2142,7 +2161,8 @@
                         previousHeight = currentHeight;
                     }
                 }
-            }else{
+            }
+            else{
                 //in order to call the functions only when the resize is finished
                 //http://stackoverflow.com/questions/4298612/jquery-how-to-call-resize-event-only-once-its-finished-resizing
                 clearTimeout(resizeId);
